@@ -36,10 +36,8 @@ trace = langfuse.trace(
 
 # Initialize LLM
 llm = LLM(
-    model="groq/deepseek-r1-distill-llama-70b",
-    temperature=0.7,
-    max_retries=5,
-    request_timeout=120
+    model="gemini/gemini-1.5-flash",
+    temperature=0.7
 )
 # Define the Data Collection Agent
 data_collection_agent = Agent(
