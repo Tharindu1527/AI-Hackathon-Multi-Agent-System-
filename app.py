@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import requests
 import json
 import yfinance as yf
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 import streamlit as st
@@ -15,11 +15,12 @@ from langfuse.client import Langfuse
 load_dotenv()
 
 # Setup API keys (replace with your actual keys)
-ALPHAVANTAGE_API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", "demo")
-FMP_API_KEY = os.getenv("FMP_API_KEY", "demo")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "your_gemini_api_key")
-LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "your_langfuse_secret_key")
-LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "your_langfuse_public_key")
+ALPHAVANTAGE_API_KEY = os.getenv("ALPHAVANTAGE_API_KEY")
+FMP_API_KEY = os.getenv("FMP_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY")
+LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Initialize Langfuse for telemetry
 langfuse = Langfuse(
@@ -34,13 +35,12 @@ trace = langfuse.trace(
 )
 
 # Initialize LLM
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
-    google_api_key=GEMINI_API_KEY,
-    temperature=0.1,
-    convert_system_message_to_human=True
+llm = LLM(
+    model="groq/deepseek-r1-distill-llama-70b",
+    temperature=0.7,
+    max_retries=5,
+    request_timeout=120
 )
-
 # Define the Data Collection Agent
 data_collection_agent = Agent(
     role="Data Collection Specialist",
